@@ -1,0 +1,202 @@
+================================================================================
+                     EpiFoundation_dev Project Summary
+================================================================================
+
+Project Name: EpiFoundation
+Purpose: Foundation model for single-cell multi-omics data integration
+Version: 1.0.0
+Date: 2024-10-27
+
+================================================================================
+                            File Statistics
+================================================================================
+
+Python Files:      20
+Config Files:      32 (pretrain: 9, finetune: 8, eval: 15)
+Documentation:     4 Markdown files + 2 text files
+Shell Scripts:     3
+Total Size:        ~528 KB
+
+================================================================================
+                          Core Components
+================================================================================
+
+1. Training Scripts (3 files)
+   - pretrain.py (17 KB)   : Distributed pretraining with DDP
+   - finetune.py (30 KB)   : Task-specific finetuning
+   - eval.py (13 KB)       : Model evaluation
+
+2. Model Architecture (8 files in model/)
+   - scTransformer.py      : Main transformer model
+   - transformer.py        : Transformer building blocks
+   - performer.py          : Linear attention variant
+   - flashMHA.py           : Flash multi-head attention
+   - flashDiff.py          : Flash differential attention
+   - reversible.py         : Reversible layers
+   - loss.py               : Model-specific losses
+   - __init__.py
+
+3. Data Processing (4 files in data/)
+   - preprocess.py         : Preprocessing utilities
+   - dataloader.py         : Custom data loaders
+   - csv2h5ad.py           : Format conversion
+   - __init__.py
+
+4. Tokenization (2 files in tokenizer/)
+   - gene_tokenizer.py     : Gene/peak vocabulary
+   - __init__.py
+
+5. Loss Functions (1 file in loss/)
+   - loss.py               : Custom losses (Masked MSE, etc.)
+
+6. Utilities (1 file)
+   - utils.py (18 KB)      : Training utilities
+
+7. Configuration (32 YAML files in configs/)
+   - configs/pretrain/     : Pretraining configs
+   - configs/finetune/     : Finetuning configs
+   - configs/eval/         : Evaluation configs
+
+8. Scripts (3 files in scripts/)
+   - pretrain.sh           : Pretraining wrapper
+   - finetune.sh           : Finetuning wrapper
+   - eval.sh               : Evaluation wrapper
+
+================================================================================
+                          Documentation
+================================================================================
+
+1. README.md (16 KB)
+   - Complete project documentation
+   - Installation instructions
+   - Usage examples
+   - Configuration guide
+   - Troubleshooting
+
+2. QUICKSTART.md (5.3 KB)
+   - 5-minute quick start guide
+   - Essential commands
+   - Common issues and fixes
+
+3. docs/DATA_PREPARATION.md
+   - Detailed data preprocessing guide
+   - Step-by-step instructions
+   - Quality control procedures
+   - Example pipelines
+
+4. docs/CONFIGURATION_GUIDE.md
+   - Comprehensive parameter reference
+   - Detailed explanations of all options
+   - Example configurations
+   - Best practices
+
+5. PROJECT_STRUCTURE.txt (5.0 KB)
+   - Directory structure
+   - File descriptions
+   - Usage flow
+
+6. CHANGELOG.md
+   - Version history
+   - Feature list
+   - Future plans
+
+7. LICENSE
+   - MIT License
+
+8. requirements.txt
+   - Python dependencies
+
+9. .gitignore
+   - Git ignore rules
+
+================================================================================
+                         Key Features
+================================================================================
+
+✓ Multi-GPU Training (DDP)
+✓ Automatic Mixed Precision (AMP)
+✓ Flash Attention Support
+✓ Cross-Modal Learning (ATAC + RNA)
+✓ Flexible Configuration System
+✓ Comprehensive Documentation
+✓ Easy to Use Scripts
+✓ Modular Architecture
+✓ Pre-trained Model Loading
+✓ Multiple Loss Functions
+✓ TensorBoard Integration
+✓ WandB Support (optional)
+
+================================================================================
+                         Usage Workflow
+================================================================================
+
+1. Install dependencies:
+   pip install -r requirements.txt
+
+2. Prepare data:
+   python prepare_data.py [options]
+
+3. Pretrain model:
+   torchrun --nproc_per_node=8 pretrain.py --config configs/pretrain/xxx.yml
+
+4. Finetune model:
+   torchrun --nproc_per_node=8 finetune.py --config configs/finetune/xxx.yml
+
+5. Evaluate model:
+   torchrun --nproc_per_node=1 eval.py --config configs/eval/xxx.yml
+
+================================================================================
+                         Requirements
+================================================================================
+
+Hardware:
+- NVIDIA GPU(s) with CUDA support
+- Recommended: 8x A100 (40GB) or V100 (32GB)
+- Minimum: 1x GPU with 16GB memory
+
+Software:
+- Python 3.9+
+- PyTorch 2.0+
+- CUDA 11.8 or 12.1
+- See requirements.txt for full list
+
+================================================================================
+                      What Was Removed
+================================================================================
+
+From original scMultiomics codebase, the following were removed:
+
+✗ test.py, test.sh              : Testing scripts
+✗ cluster.py, cluster.sh        : Clustering analysis
+✗ markers.py, markers.sh        : Marker gene analysis
+✗ upload_to_hf.py               : Hugging Face upload
+✗ test_gene_specific_decoder.py: Decoder tests
+✗ Various .md documentation files (old docs)
+✗ __pycache__ directories       : Python cache
+✗ .git/ directory               : Original git history
+✗ experiment/, result/          : Training outputs
+✗ Old README.md                 : Replaced with new
+
+Retained only essential files for the pretrain → finetune → eval workflow.
+
+================================================================================
+                       Project Location
+================================================================================
+
+/home/jwu418/workspace/EpiFoundation_dev/
+
+================================================================================
+                          Next Steps
+================================================================================
+
+1. Review the README.md for detailed instructions
+2. Check QUICKSTART.md for rapid deployment
+3. Prepare your data following DATA_PREPARATION.md
+4. Configure your experiment using example configs
+5. Start training!
+
+For questions or issues, refer to the documentation or open an issue.
+
+================================================================================
+                            End of Summary
+================================================================================

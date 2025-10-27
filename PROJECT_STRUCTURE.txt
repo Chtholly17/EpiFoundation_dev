@@ -1,0 +1,149 @@
+EpiFoundation_dev/
+│
+├── README.md                  # Main documentation
+├── QUICKSTART.md             # Quick start guide
+├── LICENSE                   # MIT License
+├── requirements.txt          # Python dependencies
+├── .gitignore               # Git ignore rules
+│
+├── scripts/                 # Shell scripts for running experiments
+│   ├── pretrain.sh         # Pretraining script
+│   ├── finetune.sh         # Finetuning script
+│   └── eval.sh             # Evaluation script
+│
+├── docs/                    # Additional documentation
+│   ├── DATA_PREPARATION.md # Data preprocessing guide
+│   └── CONFIGURATION_GUIDE.md # Configuration parameters reference
+│
+├── configs/                 # Configuration files (YAML)
+│   ├── pretrain/           # Pretraining configs
+│   ├── finetune/           # Finetuning configs
+│   └── eval/               # Evaluation configs
+│
+├── Core Scripts (Main entry points)
+│   ├── pretrain.py         # Pretraining script
+│   ├── finetune.py         # Finetuning script
+│   ├── eval.py             # Evaluation script
+│   └── prepare_data.py     # Data preparation utility
+│
+├── model/                   # Model architecture
+│   ├── __init__.py
+│   ├── scTransformer.py    # Main transformer model
+│   ├── transformer.py      # Transformer blocks
+│   ├── performer.py        # Performer (linear attention)
+│   ├── flashMHA.py         # Flash multi-head attention
+│   ├── flashDiff.py        # Flash differential attention
+│   ├── reversible.py       # Reversible layers
+│   └── loss.py             # Model-specific losses
+│
+├── data/                    # Data processing modules
+│   ├── __init__.py
+│   ├── preprocess.py       # Preprocessing utilities
+│   ├── dataloader.py       # Data loading and batching
+│   └── csv2h5ad.py         # Convert CSV to h5ad format
+│
+├── tokenizer/              # Tokenization
+│   ├── __init__.py
+│   └── gene_tokenizer.py   # Gene/peak tokenizer
+│
+├── loss/                    # Loss functions
+│   └── loss.py             # Custom loss functions
+│
+└── utils.py                # Utility functions
+
+Output directories (created during training):
+├── experiment/             # Training outputs (created automatically)
+│   └── <task_name>/
+│       ├── ckpts/         # Model checkpoints
+│       ├── logs/          # TensorBoard logs
+│       └── config.yml     # Copy of config used
+│
+└── result/                # Evaluation outputs (created automatically)
+    └── <task_name>/
+        ├── predictions.h5ad
+        └── metrics.json
+
+Expected data directory structure (user provides):
+data/
+├── train/
+│   ├── rna_binned.h5ad
+│   └── atac_binned.h5ad
+├── valid/
+│   ├── rna_binned.h5ad
+│   └── atac_binned.h5ad
+└── vocab/
+    ├── rna_vocab.json
+    ├── atac_vocab.json
+    ├── cell_type_vocab.json
+    ├── batch_vocab.json
+    ├── chr_vocab.json
+    └── gene2chr.json
+
+Key Files Description:
+======================
+
+pretrain.py:
+  - Main pretraining script with DDP support
+  - Implements masked value prediction (MVC)
+  - Cross-modal learning from ATAC + RNA
+  - Saves pretrained model to experiment/<task_name>/ckpts/
+
+finetune.py:
+  - Finetuning script for downstream tasks
+  - Supports cell type classification, expression prediction
+  - Loads pretrained model and adapts to task
+  - Saves finetuned model to experiment/<task_name>/ckpts/
+
+eval.py:
+  - Evaluation script for trained models
+  - Computes metrics (accuracy, correlation, etc.)
+  - Saves predictions and metrics to result/<task_name>/
+
+prepare_data.py:
+  - Data preprocessing pipeline
+  - Normalization, binning, vocabulary creation
+  - Train/test splitting
+
+utils.py:
+  - Helper functions for training
+  - Logging, checkpointing, metric computation
+
+model/scTransformer.py:
+  - Main transformer model architecture
+  - Multi-modal encoding (ATAC + RNA)
+  - Task-specific heads (classification, regression)
+
+data/dataloader.py:
+  - Custom dataset classes
+  - Efficient data loading for large datasets
+  - Masking and augmentation
+
+data/preprocess.py:
+  - Preprocessing utilities
+  - Normalization, binning, filtering
+  - Quality control
+
+tokenizer/gene_tokenizer.py:
+  - Gene/peak vocabulary management
+  - Token encoding/decoding
+
+loss/loss.py:
+  - Custom loss functions
+  - Masked MSE loss for MVC
+  - Zero-inflated loss for expression
+
+Usage Flow:
+===========
+
+1. Prepare data:
+   python prepare_data.py --config data_config.yml
+
+2. Pretrain:
+   torchrun --nproc_per_node=8 pretrain.py --config configs/pretrain/my_config.yml
+
+3. Finetune:
+   torchrun --nproc_per_node=8 finetune.py --config configs/finetune/my_config.yml
+
+4. Evaluate:
+   torchrun --nproc_per_node=1 eval.py --config configs/eval/my_config.yml
+

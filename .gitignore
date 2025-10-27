@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch
+*.pth
+*.pt
+!configs/**/*.pt
+
+# Experiments and logs
+experiment/
+result/
+logs/
+runs/
+*.log
+
+# Data files
+*.h5ad
+*.csv
+*.json
+!configs/**/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# OS
+.DS_Store
+Thumbs.db
+

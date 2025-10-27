@@ -1,0 +1,69 @@
+task_name: bmmc_atlas_hvg_aux_gene_specific
+
+train:
+  # for ditributed training
+  local_rank: 0
+  # random seed
+  seed: 2002
+
+  # training hyperparameters
+  batch_size: 2
+  lr: 1e-4
+  epochs: 100
+  gradient_accumulation_steps: 160  # Effective batch size: 2 × 160 × 8 = 2560
+  amp: True
+  save_ckpt_freq: 20
+  resume: False
+
+  model:
+    encoder: transformer
+    pretrained: /home/jwu418/workspace/scMultiomics/experiment/mini_atlas_pretrain/ckpts/pretrain.pth # set to None if not using pretrained model
+    # pretrained: null
+    embedding_method: id_only
+    atac_max_len: 12000  # Reduced from 12000 to save memory
+    rna_max_len: 2000   # Reduced from 8000 to save memory
+    embedding_dim: 512
+    num_layers: 6
+    head_num: 8
+    head_dim: 1024
+    dropout: 0.15
+    additional_config_path: /path/to/additional_config.json
+    cell_emb_style: cls
+    mvc_arch_style: gene-specific concat query
+    use_batch_labels: False
+    use_chr_labels: True
+  
+  task_weight:
+    cell_type: 2.0
+    mvc: 1.0
+
+valid:
+  freq: 2
+
+data:
+  bin_num: &bn 2 # bin number in pretrained data
+  append_cls: True
+  train:
+    atac_path: /home/jwu418/workspace/data/ours/train/bmmc_atlas_atac.h5ad
+    atac_key: X
+    rna_path: /home/jwu418/workspace/data/ours/train/bmmc_atlas_rna_binning_10.h5ad
+    rna_key: X
+  test:
+    atac_path: /home/jwu418/workspace/data/ours/valid/bmmc_atlas_atac.h5ad
+    atac_key: X
+    rna_path: /home/jwu418/workspace/data/ours/valid/bmmc_atlas_rna_binning_10.h5ad
+    rna_key: X
+
+vocab:
+  rna_path: /home/jwu418/workspace/data/ours/vocab/rna_vocab.json
+  atac_path: /home/jwu418/workspace/data/ours/vocab/atac_vocab.json
+  cell_type_path: /home/jwu418/workspace/data/ours/vocab/fine_tune_cell_type_vocab.json
+  batch_path: /home/jwu418/workspace/data/ours/vocab/fine_tune_batch_vocab.json
+  chr_path: /home/jwu418/workspace/data/ours/vocab/chr_vocab.json
+  gene2chr_path: /home/jwu418/workspace/data/ours/vocab/gene2chr.json
+  hvg_path: /home/jwu418/workspace/data/ours/variable_genes/bmmc_atlas_variable_genes.csv
+  special_tokens:
+    pad: {token: <pad>, value: 10}
+    # value of the mask is 1 plus bin_num
+    mask: {token: <mask>, value: 11}
+    cls: {token: <cls>, value: 0}

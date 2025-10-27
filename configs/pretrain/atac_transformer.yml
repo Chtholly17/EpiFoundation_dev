@@ -1,0 +1,60 @@
+task_name: atac_cell_type_pretrain_mvc_finetune
+
+train:
+  # for ditributed training
+  local_rank: 0
+  # random seed
+  seed: 2002
+
+  # training hyperparameters
+  batch_size: 8
+  lr: 1e-4
+  epochs: 150
+  gradient_accumulation_steps: 20
+  amp: True
+  save_ckpt_freq: 2
+  resume: False
+
+  model:
+    encoder: transformer
+    pretrained: /home/jwu418/workspace/scMultiomics/experiment/atac_cell_type/ckpts/Epoch_150_Step_122550_atac_cell_type.pth # set to None if not using pretrained model
+    # pretrained: null
+    embedding_method: id_only
+    non_zero_len: 7000
+    zero_len: 3000
+    embedding_dim: 512
+    num_layers: 6
+    head_num: 8
+    head_dim: 1024
+    dropout: 0.2
+    additional_config_path: /path/to/additional_config.json
+    cell_emb_style: cls
+    mvc_arch_style: concat query
+  
+  task_weight:
+    cell_type: 1.0
+    mvc: 1.0
+
+valid:
+  freq: 2
+
+data:
+  bin_num: &bn 2
+  append_cls: True
+  train:
+    mask_ratio: 0.12
+    path: /home/jwu418/workspace/data/ours/train/bmmc_atac.h5ad
+    key: X
+  test:
+    mask_ratio: 0.12
+    path: /home/jwu418/workspace/data/ours/valid/bmmc_atac.h5ad
+    key: X
+
+vocab:
+  path: /home/jwu418/workspace/data/ours/vocab/bmmc_atac_vocab.json
+  cell_type_path: /home/jwu418/workspace/data/ours/vocab/bmmc_cell_vocab.json
+  special_tokens:
+    pad: {token: <pad>, value: 2}
+    # value of the mask is 1 plus bin_num
+    mask: {token: <mask>, value: 3}
+    cls: {token: <cls>, value: 0}
