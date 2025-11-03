@@ -1,4 +1,4 @@
-task_name: bmmc_atlas_zero_inflated_finetune
+task_name: kidney_atlas_zero_inflated_finetune
 
 train:
   seed: 2002
@@ -12,7 +12,7 @@ train:
 
   model:
     encoder: transformer
-    pretrained: /home/jwu418/workspace/scMultiomics/experiment/mini_atlas_pretrain/ckpts/pretrain.pth
+    pretrained: /home/jwu418/workspace/EpiFoundation_dev/weight/pretrain.pth
     embedding_method: id_only
     atac_max_len: 12000
     rna_max_len: 2000
@@ -44,24 +44,24 @@ data:
   bin_num: 2
   append_cls: True
   train:
-    atac_path: /home/jwu418/workspace/data/ours/train/bmmc_atlas_atac.h5ad
+    atac_path: /home/jwu418/workspace/data/ours/train/kidney_atlas_atac.h5ad
     atac_key: X
-    rna_path: /home/jwu418/workspace/data/ours/train/bmmc_atlas_rna_binning_10.h5ad
+    rna_path: /home/jwu418/workspace/data/ours/train/kidney_atlas_rna_binning_10.h5ad
     rna_key: X
   test:
-    atac_path: /home/jwu418/workspace/data/ours/valid/bmmc_atlas_atac.h5ad
+    atac_path: /home/jwu418/workspace/data/ours/valid/kidney_atlas_atac.h5ad
     atac_key: X
-    rna_path: /home/jwu418/workspace/data/ours/valid/bmmc_atlas_rna_binning_10.h5ad
+    rna_path: /home/jwu418/workspace/data/ours/valid/kidney_atlas_rna_binning_10.h5ad
     rna_key: X
 
 vocab:
   rna_path: /home/jwu418/workspace/data/ours/vocab/rna_vocab.json
   atac_path: /home/jwu418/workspace/data/ours/vocab/atac_vocab.json
-  cell_type_path: /home/jwu418/workspace/data/ours/vocab/fine_tune_cell_type_vocab.json
-  batch_path: /home/jwu418/workspace/data/ours/vocab/fine_tune_batch_vocab.json
+  cell_type_path: /home/jwu418/workspace/data/ours/vocab/cell_kidney.json
+  batch_path: /home/jwu418/workspace/data/ours/vocab/batch_kidney.json
   chr_path: /home/jwu418/workspace/data/ours/vocab/chr_vocab.json
   gene2chr_path: /home/jwu418/workspace/data/ours/vocab/gene2chr.json
-  hvg_path: /home/jwu418/workspace/data/ours/variable_genes/bmmc_atlas_variable_genes.csv
+  hvg_path: /home/jwu418/workspace/data/ours/variable_genes/kidney_atlas_variable_genes.csv
   special_tokens:
     pad: {token: <pad>, value: 10}
     mask: {token: <mask>, value: 11}

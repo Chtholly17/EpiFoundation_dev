@@ -1,4 +1,4 @@
-task_name: kidney_atlas_expression
+task_name: kidney_atlas_expression_hvg_aux_zero_inflated
 
 train:
   # for ditributed training
@@ -17,7 +17,7 @@ train:
 
   model:
     encoder: transformer
-    pretrained: /home/jwu418/workspace/scMultiomics/experiment/kidney_atlas_10bins/ckpts/Epoch_100_Step_44900_kidney_atlas_10bins.pth # set to None if not using pretrained model
+    pretrained: /home/jwu418/workspace/EpiFoundation_dev/experiment/kidney_atlas_zero_inflated_finetune/ckpts/finetuned.pth # set to None if not using pretrained model
     # pretrained: null
     embedding_method: id_only
     atac_max_len: 12000
@@ -29,9 +29,19 @@ train:
     dropout: 0.15
     additional_config_path: /path/to/additional_config.json
     cell_emb_style: cls
-    mvc_arch_style: concat query
+    mvc_arch_style: gene-specific concat query
     use_batch_labels: False
     use_chr_labels: True
+    # Zero-inflated model parameters
+    use_zero_inflated: True
+    regression_max_value: 9.0
+    zero_threshold: 0.6
+
+  task_weight:
+    cell_type: 2.0
+    mvc: 1.0
+    zero_bce: 1.0
+    value_mse: 1.0
 
   metric: True
 
@@ -39,7 +49,7 @@ valid:
   freq: 2
 
 data:
-  bin_num: &bn 2 # bin number in pretrained data
+  bin_num: 2
   append_cls: True
   train:
     atac_path: /home/jwu418/workspace/data/ours/train/kidney_atlas_atac.h5ad
@@ -59,8 +69,9 @@ vocab:
   batch_path: /home/jwu418/workspace/data/ours/vocab/batch_kidney.json
   chr_path: /home/jwu418/workspace/data/ours/vocab/chr_vocab.json
   gene2chr_path: /home/jwu418/workspace/data/ours/vocab/gene2chr.json
+  hvg_path: /home/jwu418/workspace/data/ours/variable_genes/kidney_atlas_variable_genes.csv
   special_tokens:
     pad: {token: <pad>, value: 10}
-    # value of the mask is 1 plus bin_num
     mask: {token: <mask>, value: 11}
     cls: {token: <cls>, value: 0}
+
